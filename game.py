@@ -17,7 +17,6 @@ ballSpeedY = 1
 
 # Game Loop
 while (gameWindow):
-    gameWindow.clear()
     gameWindow.set_background_color((0, 0, 0))
 
     ball.x += ballSpeedX
