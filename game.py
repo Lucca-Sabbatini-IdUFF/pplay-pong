@@ -1,9 +1,10 @@
 # Imports
-from PPlay.sprite import *
-from PPlay.window import *
-from classes.Ball import *
-from classes.Pad import *
-from classes.AI import *
+from src.pplay.sprite import *
+from src.pplay.window import *
+from src.classes.Ball import *
+from src.classes.Pad import *
+from src.classes.AI import *
+from src.classes.Scoreboard import *
 
 # Game Window Initialization
 gameWindow = Window(1200,800)
@@ -12,40 +13,60 @@ gameWindow.set_title("Pong")
 # Keyboard Initialization
 keyboard = gameWindow.get_keyboard()
 
-# Ball Initialization
-ball1 = Ball(gameWindow, "./assets/images/ball.png", 200)
+# Scoreboard Initialization
+scoreboard = Scoreboard(gameWindow)
 
 # Pads Initialization
-leftPad = Pad(gameWindow, keyboard, "./assets/images/pad.png", 200, "left")
-rightPad = Pad(gameWindow, keyboard,"./assets/images/pad.png", 200, "right")
-
-# Scoreboard
-leftScore = 0
-rightScore = 0
+leftPad = Pad(gameWindow, keyboard, "./assets/images/pad.png", 400, "left")
+rightPad = Pad(gameWindow, keyboard,"./assets/images/pad.png", 400, "right")
 
 # AI
 padAI = AI(gameWindow, rightPad)
 
+# Ball Initialization
+ball = Ball(gameWindow, "./assets/images/ball.png", 450, 20)
+extraBall = Ball(gameWindow, "./assets/images/ball.png", -450, 20)
+ballsArray = [ball]
+
 # Game Loop
 while (gameWindow):
+    # Clean Background
     gameWindow.set_background_color((0, 0, 0))
 
-    # Ball X Axis Collision
-    ball1.xAxisCollisionCheck()
+    if (not len(ballsArray)):
+        ball.rallyCount = 0
+        ballsArray.append(ball)
+    
+    if (len(ballsArray) == 1 and ball.rallyCount == 6):
+        ballsArray.append(extraBall)
 
-    # Ball Y Axis Collision
-    ball1.yAxisCollisionCheck(leftPad, rightPad)
+    for ballInstance in ballsArray:
+        # Ball X Axis Collision
+        ballInstance.xAxisCollisionCheck()
 
-    # Ball Movement
-    ball1.move()
+        # Ball Y Axis Collision and Point Counting
+        collisionResult = ballInstance.yAxisCollisionCheck(leftPad, rightPad)
+
+        if (collisionResult):
+            scoreboard.countPoint(collisionResult)
+            ballsArray.remove(ballInstance)
+
+        # Ball Movement
+        ballInstance.move()
+
+    # AI Movement
+    padAI.makeMove(ballsArray)
 
     #Pads Movement
     leftPad.controlMove()
-    # rightPad.controlMove()
-    padAI.makeMove(ball1)
+    rightPad.controlMove()
     
     # Draw Game Objects
-    ball1.gameObject.draw()
+    scoreboard.drawScoreboard()
+    
+    for ballInstance in ballsArray:
+        ballInstance.gameObject.draw()
+
     leftPad.gameObject.draw()
     rightPad.gameObject.draw()
 

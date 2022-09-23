@@ -1,4 +1,4 @@
-from PPlay.sprite import *
+from src.pplay.sprite import *
 
 class Pad:
     window = None
@@ -9,6 +9,7 @@ class Pad:
     ySpeed = None
     moveUpKeybind = None
     moveDownKeybind = None
+    AI = False
 
     def __init__(self, window, keyboard, spritePath, initialSpeed, side):
         self.window = window
@@ -33,14 +34,20 @@ class Pad:
         self.ySpeed = self.absoluteSpeed
 
     def controlMove(self):
-        if (self.keyboard.key_pressed(self.moveUpKeybind) and self.gameObject.y > 0):
-            self.moveUp()
+        if (not self.AI):
+            if (self.keyboard.key_pressed(self.moveUpKeybind) and self.gameObject.y > 0):
+                self.moveUp()
 
-        if (self.keyboard.key_pressed(self.moveDownKeybind) and self.gameObject.y < (self.window.height - self.gameObject.height)):
-            self.moveDown()
+            if (self.keyboard.key_pressed(self.moveDownKeybind) and self.gameObject.y < (self.window.height - self.gameObject.height)):
+                self.moveDown()
+
 
     def moveUp(self):
         self.gameObject.y -= self.ySpeed * self.window.delta_time()
+        if (self.gameObject.y < 0):
+            self.gameObject.y = 0
 
     def moveDown(self):
         self.gameObject.y += self.ySpeed * self.window.delta_time()
+        if (self.gameObject.y < 0):
+            self.gameObject.y = 0
