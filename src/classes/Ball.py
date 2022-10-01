@@ -41,7 +41,7 @@ class Ball:
             self.xSpeed = self.initialSpeed
             self.ySpeed = self.initialSpeed
 
-            return "right"
+            return "left"
         elif (((self.gameObject.x + self.gameObject.width) >= self.window.width) and rightPad.gameObject.collided(self.gameObject)):
             self.gameObject.x = self.window.width - self.gameObject.width
             self.xSpeed = -(self.xSpeed + self.rallyAcceleration)
@@ -64,7 +64,7 @@ class Ball:
             self.xSpeed = self.initialSpeed
             self.ySpeed = self.initialSpeed
 
-            return "left"
+            return "right"
     
     def move(self):
         self.gameObject.x += self.xSpeed * self.window.delta_time()
